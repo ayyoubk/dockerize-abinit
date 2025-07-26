@@ -5,8 +5,8 @@ baseurl: "/dockerize-abinit"
 url: "https://ayyoubk.github.io"
 
 # Theme selection (choose one):
-theme: minima                    # Clean, minimal theme
-# theme: jekyll-theme-cayman     # Professional with gradient header
+# theme: minima                    # Clean, minimal theme
+theme: jekyll-theme-cayman       # 🏆 RECOMMENDED: Professional with gradient header
 # theme: jekyll-theme-slate      # Dark theme, great for technical docs
 # theme: jekyll-theme-architect  # Modern with banner
 # theme: jekyll-theme-minimal    # Very clean, documentation-focused
