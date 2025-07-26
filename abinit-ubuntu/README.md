@@ -16,86 +16,145 @@ This Docker image provides ABINIT using Ubuntu's official package repository. Th
 ### 1. Build the Docker Image
 
 ```bash
-# Navigate to this directory
+# Pull and run - it's that simple!
+docker pull ayyoubk/abinit-ubuntu:latest
+docker run -it ayyoubk/abinit-ubuntu:latest
+
+# Run a calculation with your files
+docker run --rm -v $(pwd):/workspace ayyoubk/abinit-ubuntu:latest abinit < input.files
+```
+
+## 📦 What's Included
+
+| Component | Version | Purpose |
+|-----------|---------|----------|
+| **🧮 ABINIT** | Latest stable | Core DFT calculations |
+| **🚀 OpenMPI** | 4.1+ | Parallel processing |
+| **🐍 Python 3** | 3.10+ | Scientific computing |
+| **📊 AbiPy** | Latest | ABINIT analysis toolkit |
+| **⚛️ PyMatGen** | Latest | Materials analysis |
+| **📈 Jupyter** | Latest | Interactive notebooks |
+| **🔢 NumPy/SciPy** | Latest | Scientific libraries |
+
+### 🏗️ System Libraries
+- **FFTW3**: Fast Fourier transforms
+- **BLAS/LAPACK**: Linear algebra routines  
+- **HDF5/NetCDF**: High-performance I/O
+- **OpenBLAS**: Optimized math operations
+
+## 🎯 Target Environment
+
+| Specification | Requirement |
+|---------------|-------------|
+| **OS** | Ubuntu 24.04.1 LTS (adaptable) |
+| **CPU** | Intel Xeon E5-2698 v4 (80 cores) |
+| **Memory** | 4GB min, 16GB+ recommended |
+| **Storage** | 10GB+ for images/workspaces |
+| **Network** | Docker networking support |
+
+## 💡 Usage Examples
+
+### 🖥️ Interactive Session
+```bash
+# Start interactive container with workspace mount
+docker run -it -v $(pwd):/workspace ayyoubk/abinit-ubuntu:latest
+
+# Inside container - check everything works
+abinit --version
+mpirun --version
+python3 -c "import abipy; print('AbiPy ready!')"
+```
+
+### ⚡ Parallel Calculation
+```bash
+# Run with 8 MPI processes
+docker run --rm \
+  -v $(pwd):/workspace \
+  ayyoubk/abinit-ubuntu:latest \
+  mpirun -np 8 abinit < input.files > output.log
+```
+
+### 📊 Python Analysis Session
+```bash
+# Start Jupyter for post-processing
+docker run -p 8888:8888 \
+  -v $(pwd):/workspace \
+  ayyoubk/abinit-ubuntu:latest \
+  jupyter notebook --ip=0.0.0.0 --allow-root --no-browser
+```
+
+### 🔄 Batch Processing
+```bash
+# Process multiple calculations
+for calc in calc_*/; do
+  echo "Processing $calc"
+  docker run --rm -v $(pwd)/$calc:/workspace \
+    ayyoubk/abinit-ubuntu:latest \
+    abinit < input.files > output.log 2>&1
+done
+```
+
+## 🛠️ Build Information
+
+### 🏗️ Docker Build
+```bash
+# Build locally (optional - image available on Docker Hub)
 cd abinit-ubuntu/
-
-# Build the image (this will take 5-10 minutes)
-docker build -t abinit-ubuntu .
-
-# Verify the build succeeded
-docker images | grep abinit-ubuntu
+docker build -t ayyoubk/abinit-ubuntu:latest .
 ```
 
-### 2. Test the Installation
+### 📋 Build Details
+- **Base Image**: Ubuntu 22.04 LTS
+- **Build Method**: Ubuntu package manager (apt)
+- **Build Time**: ~5 minutes
+- **Final Size**: ~1.5GB
+- **Optimization**: Multi-layer caching, cleanup
 
+## 🔍 Container Internals
+
+### 📁 Directory Structure
+```
+/usr/bin/abinit           # ABINIT executables
+/usr/lib/python3.10/      # Python packages
+/workspace/               # User workspace (mount point)
+/data/                    # Data directory (optional mount)
+/results/                 # Results directory (optional mount)
+```
+
+### 🌍 Environment Variables
 ```bash
-# Run a quick test to verify ABINIT works
-docker run --rm abinit-ubuntu abinit --version
+PATH=/usr/local/bin:/usr/bin:$PATH
+OMP_NUM_THREADS=1
+OMPI_MCA_btl_vader_single_copy_mechanism=none
+PYTHONPATH=/usr/local/lib/python3.10/site-packages:$PYTHONPATH
 ```
 
-### 3. Run Interactive Session
+## 🔧 Advanced Configuration
 
+### 🎛️ Resource Limits
 ```bash
-# Start an interactive container with your current directory mounted
-docker run -it -v $(pwd):/workspace abinit-ubuntu
-
-# Inside the container, you can now run ABINIT commands:
-# abinit --version
-# abinit input.files
+# Set CPU and memory limits
+docker run --cpus="8" --memory="16g" \
+  -v $(pwd):/workspace \
+  ayyoubk/abinit-ubuntu:latest \
+  mpirun -np 8 abinit < input.files
 ```
 
-## Usage Examples
-
-### Basic ABINIT Calculation
-
+### 🔒 Security Configuration
 ```bash
-# Prepare your input files on the host system
-# Then run the container with volume mounting:
-docker run -it -v /path/to/your/calculations:/workspace abinit-ubuntu
-
-# Inside container:
-abinit < input.files
+# Run as specific user
+docker run --user $(id -u):$(id -g) \
+  -v $(pwd):/workspace \
+  ayyoubk/abinit-ubuntu:latest \
+  abinit < input.files
 ```
 
-### MPI Parallel Calculations
-
+### 🌐 Network Configuration
 ```bash
-# Run ABINIT with multiple processes
-docker run -it -v $(pwd):/workspace abinit-ubuntu mpirun -np 4 abinit < input.files
-
-# For larger calculations, adjust -np based on your needs
-docker run -it -v $(pwd):/workspace abinit-ubuntu mpirun -np 8 abinit < input.files
-```
-
-## Sharing Your Image
-
-### 1. Push to Docker Hub
-
-```bash
-# Tag your image with your Docker Hub username
-docker tag abinit-ubuntu YOUR_USERNAME/abinit-ubuntu:latest
-
-# Login to Docker Hub
-docker login
-
-# Push the image
-docker push YOUR_USERNAME/abinit-ubuntu:latest
-```
-
-### 2. Template Email for System Administrator
-
-```
-Subject: Docker Image for ABINIT - Ready for HPC Deployment
-
-Dear [System Administrator Name],
-
-I have prepared a Docker image containing ABINIT for use on our HPC cluster. The image is ready for deployment and has been tested for compatibility.
-
-**Docker Image Details:**
-- Image: YOUR_USERNAME/abinit-ubuntu:latest
-- Base: Ubuntu 22.04 LTS
-- ABINIT: Official Ubuntu package version
-- Size: ~500MB (estimated)
+# For HPC clusters - use host networking
+docker run --network=host \
+  -v $(pwd):/workspace \
+  ayyoubk/abinit-ubuntu:latest
 
 **Deployment Commands:**
 
@@ -117,6 +176,7 @@ docker run -it -v /path/to/calculation:/workspace YOUR_USERNAME/abinit-ubuntu:la
 Run MPI parallel calculation:
 ```
 docker run -it -v /path/to/calculation:/workspace YOUR_USERNAME/abinit-ubuntu:latest mpirun -np [NUM_CORES] abinit < input.files
+# Example: mpirun -np 16 abinit < input.files
 ```
 
 **Benefits:**
