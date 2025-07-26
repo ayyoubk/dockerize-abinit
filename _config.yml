@@ -1,0 +1,34 @@
+# GitHub Pages Configuration
+title: "Dockerize ABINIT"
+description: "Professional Docker containerization for ABINIT on HPC clusters"
+baseurl: "/dockerize-abinit"
+url: "https://ayyoubk.github.io"
+
+# Theme selection (choose one):
+theme: minima                    # Clean, minimal theme
+# theme: jekyll-theme-cayman     # Professional with gradient header
+# theme: jekyll-theme-slate      # Dark theme, great for technical docs
+# theme: jekyll-theme-architect  # Modern with banner
+# theme: jekyll-theme-minimal    # Very clean, documentation-focused
+
+# Site metadata
+author:
+  name: "Ayyoub Al keyyam"
+  email: "ayoub.alqeam@gmail.com"
+
+# GitHub repository info
+github:
+  repository_name: "dockerize-abinit"
+  repository_url: "https://github.com/ayyoubk/dockerize-abinit"
+
+# Navigation (optional)
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+# Markdown settings
+markdown: kramdown
+highlighter: rouge
+
+# Enable GitHub Pages
+github: [metadata]
