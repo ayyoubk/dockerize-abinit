@@ -162,7 +162,7 @@ dockerize-abinit/
 <div align="center">
 
 <strong>🎯 Status</strong>: ✅ Production Ready | <strong>📅 Last Updated</strong>: July 2025 | <strong>🐳 Docker Hub</strong>: <a href="https://hub.docker.com/r/ayyoubk/abinit-ubuntu">ayyoubk/abinit-ubuntu</a>
-
+<br><br>
 <strong>Made with ❤️ for the computational materials science community</strong>
 
 </div>
